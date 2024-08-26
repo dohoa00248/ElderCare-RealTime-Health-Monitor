@@ -22,6 +22,7 @@ configViewEngine(app);
 
 // static file setup
 configStaticFolders(app);
+
 // middleware setup
 parseJson(app);
 
