@@ -1,28 +1,32 @@
 import mongoose from "mongoose";
-
+import bcrypt from 'bcrypt';
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        // require: true,
-        trim: true
+        require: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
     },
     password: {
         type: String,
         require: false,
-        trim: true,
     },
     role: {
         type: Number,
-        // require: true,
+        require: true,
+        default: 2
     }
 }, {
     timestamps: true,
-    excludeIndexes: [
-
-    ]
 }
 )
-
+// Phương thức so sánh mật khẩu
+userSchema.methods.comparePassword = function (candidatePassword, callback) {
+    bcrypt.compare(candidatePassword, this.password, callback);
+};
 const User = mongoose.model('User', userSchema);
 
 export default User
