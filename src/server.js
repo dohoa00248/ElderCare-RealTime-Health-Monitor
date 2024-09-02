@@ -2,9 +2,11 @@ import express from 'express';
 import { configDotenv } from 'dotenv';
 import configViewEngine from './config/view.engine.js';
 import parseJson from './middleware/parse.json.js';
+import setupMethodOverride from './middleware/methodOverride.js';
 import webRoutes from './routes/web.js';
 import connectDB from './config/db.connect.js';
 import configStaticFolders from './config/static.folder.js';
+
 const app = express();
 
 // Load environment variables from.env file
@@ -25,7 +27,8 @@ configStaticFolders(app);
 
 // middleware setup
 parseJson(app);
-
+setupMethodOverride(app);
+// app.use(methodOverride('_method'));
 // routes
 webRoutes(app);
 
