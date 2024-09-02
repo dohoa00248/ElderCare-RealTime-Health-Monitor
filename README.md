@@ -16,7 +16,10 @@ A brief description of what your project does and its purpose.
 Technology Used:
 Backend: Node.js and Express for server-side development.
 Database: MongoDB Compass for cloud-based data storage, with Mongoose for schema management.
-Frontend: Utilized Bootstrap for responsive design and jQuery for dynamic content manipulation and event handling.
+Frontend:
+Bootstrap: Used for responsive design to ensure a consistent user experience across various devices and screen sizes.
+jQuery: Employed for dynamic content manipulation and event handling to enhance interactivity and user experience.
+EJS: Implemented for server-side templating, enabling dynamic rendering of HTML pages based on data from the server.
 Authentication: Implemented user authentication using JSON Web Tokens (JWT) for secure sign-in and session management.
 Admin Panel: Developed an admin management panel using Bootstrap for layout and styling, with jQuery for handling user interactions and dynamic content updates.
 
