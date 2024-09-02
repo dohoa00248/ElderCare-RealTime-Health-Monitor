@@ -18,9 +18,6 @@ router.get('/create', (req, res) => {
     res.render('create.ejs'); s
 });
 
-router.get('/logout', (req, res) => {
-    res.render('testhome.ejs');
-})
 
 router.post('/create', async (req, res) => {
     const { username, password, email } = req.body;

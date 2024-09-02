@@ -7,6 +7,18 @@ A brief description of what your project does and its purpose.
 ## Features
 
 - List of key features and functionalities of the project.
+  Application Function:
+  Developed a real-time health monitoring application designed for elderly care, tracking vital signs such as heart rate, blood pressure, and glucose levels.
+  Added user authentication (sign in) functionality to secure access and manage user sessions.
+  Implemented an admin management panel for overseeing and managing application users and system settings.
+  Features include real-time alerts for caregivers, historical data analysis, and integration with wearable devices to ensure continuous health oversight and timely intervention.
+
+Technology Used:
+Backend: Node.js and Express for server-side development.
+Database: MongoDB Compass for cloud-based data storage, with Mongoose for schema management.
+Frontend: Utilized Bootstrap for responsive design and jQuery for dynamic content manipulation and event handling.
+Authentication: Implemented user authentication using JSON Web Tokens (JWT) for secure sign-in and session management.
+Admin Panel: Developed an admin management panel using Bootstrap for layout and styling, with jQuery for handling user interactions and dynamic content updates.
 
 ## Installation
 
