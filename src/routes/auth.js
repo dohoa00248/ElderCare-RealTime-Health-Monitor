@@ -24,56 +24,27 @@ router.post('/signup', async (req, res) => {
     }
 })
 router.post('/signin', async (req, res) => {
-    // const { username, password } = req.body;
-
-    // try {
-    //     // Tìm người dùng theo username
-    //     const user = await User.findOne({ username });
-
-    //     if (!user) {
-    //         return res.status(401).send('Tài khoản không tồn tại');
-    //     }
-
-    //     // So sánh mật khẩu
-    //     user.comparePassword(password, (err, isMatch) => {
-    //         if (err) {
-    //             console.error('Lỗi so sánh mật khẩu:', err); // Ghi lỗi vào log
-    //             return res.status(500).send('Lỗi hệ thống');
-    //         }
-    //         if (!isMatch) {
-    //             return res.status(401).send('Mật khẩu không chính xác');
-    //         }
-
-    //         // Nếu đăng nhập thành công, chuyển hướng đến trang người dùng
-    //         res.redirect('/api/v1/user');
-    //     });
-    // } catch (err) {
-    //     console.error('Lỗi xử lý đăng nhập:', err); // Ghi lỗi vào log
-    //     res.status(500).send('Lỗi hệ thống');
-    // }
-
     const { username, password } = req.body;
+
     try {
-        // Tìm người dùng theo username
-        const userToSingin = await User.findOne({ username: username });
+        // Xác thực người dùng
+        const users = await User.signIn(username, password);
 
-        if (!userToSingin) {
-            return res.status(401).send('Username does not exist');
-        }
+        // Nếu đăng nhập thành công, render trang người dùng
+        res.render('user.ejs', {
+            users: {
+                id: users._id,
+                username: users.username,
+                email: users.email,
+                role: users.role
+            }
+        });
 
-        // So sánh mật khẩu
-        if (userToSingin.password === password) {
-            // Nếu mật khẩu khớp, chuyển hướng đến trang người dùng
-            // return res.redirect('/api/v1/user');
-            res.render('user.ejs', { users: userToSingin });
-        } else {
-            // res.status(401).send('Mật khẩu không chính xác');
-            return res.status(401).send('Password is incorrect');
-        }
     } catch (err) {
-        console.error('Lỗi xử lý đăng nhập:', err);
-        // res.status(500).send('Lỗi hệ thống');
-        res.status(500).send('Error server: ' + err.message);
+        console.error('Lỗi xử lý đăng nhập:', err.message);
+
+        // Nếu có lỗi, có thể gửi thông báo lỗi hoặc render một trang lỗi
+        res.status(401).send(err.message);
     }
 })
 

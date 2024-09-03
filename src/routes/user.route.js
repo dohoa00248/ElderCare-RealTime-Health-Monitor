@@ -5,12 +5,12 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     // res.send('Hello World');
-    const users = await User.find();
+    const users = await User.find({});
     res.render('user.ejs', { users: users });
 });
 
 router.get('/admin', async (req, res) => {
-    const users = await User.find();
+    const users = await User.find({});
     res.render('testadmin.ejs', { users: users });
 })
 
@@ -64,13 +64,23 @@ router.get('/delete/:userId', async (req, res) => {
 });
 
 router.put('/update/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const updatedData = req.body;
 
-    const user = await User.findByIdAndUpdate(req.params.userId, req.body, { new: true });
     try {
-        // res.status(200).json(user);
+        // Sử dụng phương thức updateUser từ mô hình User
+        const updatedUser = await User.updateUser(userId, updatedData);
+
+        // Kiểm tra nếu người dùng không được tìm thấy
+        if (!updatedUser) {
+            return res.status(404).json({ status: false, message: 'User not found.' });
+        }
+
+        // Nếu cập nhật thành công, chuyển hướng đến trang admin hoặc một trang khác
         res.redirect('/api/v1/user/admin');
     } catch (error) {
-        res.status(400).json({ status: false, message: 'Error updating user.', error: error });
+        console.error('Error updating user:', error);
+        res.status(400).json({ status: false, message: 'Error updating user.', error: error.message });
     }
 });
 
