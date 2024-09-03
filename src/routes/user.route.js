@@ -15,9 +15,8 @@ router.get('/admin', async (req, res) => {
 })
 
 router.get('/create', (req, res) => {
-    res.render('create.ejs'); s
+    res.render('create.ejs');
 });
-
 
 router.post('/create', async (req, res) => {
     const { username, password, email } = req.body;
