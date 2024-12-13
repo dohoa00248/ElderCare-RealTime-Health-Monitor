@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 import { configDotenv } from "dotenv";
 
 configDotenv({ path: '../../.env' });
-
-// console.log(process.env)
+// configDotenv();
 // console.log(process.env.MONGODB_URI);
 
 const connectDB = async () => {

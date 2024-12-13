@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <p id="message">Test Protect Token</p>
+        <div id="dashboardContent" style="display:none;">
+            <h1>Welcome to Your Dashboard</h1>
+            <!-- Thêm nội dung bảo vệ ở đây -->
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('token');  // Lấy token từ localStorage
+            console.log('Token:', token); // Kiểm tra token lấy từ localStorage
+
+            if (!token) {
+                // Nếu không có token, chuyển hướng người dùng về trang đăng nhập
+                window.location.href = '/api/v1/test/signin';
+            } else {
+                // Gửi token trong header của yêu cầu đến server để xác thực
+                $.ajax({
+                    url: '/api/v1/test/testprotect',  // Đảm bảo đây là route bảo vệ trên server
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`  // Gửi token trong header Authorization
+                    },
+                    success: function (response) {
+                        // Nếu token hợp lệ, hiển thị nội dung dashboard
+                        console.log('Success:', response);  // Xem phản hồi từ server
+                        $('#message').text('Token is valid. Welcome!');
+                        $('#dashboardContent').show();
+                    },
+                    error: function (xhr) {
+                        // Nếu token không hợp lệ hoặc hết hạn, chuyển hướng về trang đăng nhập
+                        console.error('Error:', xhr.responseText);  // Kiểm tra lỗi từ server
+                        $('#message').text('Invalid or expired token. Redirecting to login...');
+                        setTimeout(() => {
+                            window.location.href = '/api/v1/test/signin';  // Chuyển hướng về trang đăng nhập sau 2 giây
+                        }, 2000);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

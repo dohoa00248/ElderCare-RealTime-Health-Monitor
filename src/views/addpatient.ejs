@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Patient</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Add New Patient</h2>
+        <form id="addPatientForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="doctorId">Doctor ID</label>
+                <input type="text" id="doctorId" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="deviceId">Device ID</label>
+                <input type="text" id="deviceId" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" class="form-control" required>
+                    <option value="3">Patient</option> <!-- Only option available for the role -->
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Patient</button>
+        </form>
+        <!-- Back to Admin Dashboard button -->
+        <a href="/api/v1/user/admin/dashboard" class="btn btn-secondary mt-3">Back to Admin Dashboard</a>
+    </div>
+
+    <script>
+        $('#addPatientForm').submit(function (e) {
+            e.preventDefault();
+
+            // Get the form data including the new deviceId field
+            const formData = {
+                username: $('#username').val(),
+                email: $('#email').val(),
+                password: $('#password').val(),
+                firstName: $('#firstName').val(),
+                lastName: $('#lastName').val(),
+                role: $('#role').val(),
+                doctorId: $('#doctorId').val(),
+                deviceId: $('#deviceId').val(), // Add deviceId field
+            };
+
+            // Send the data to the backend API
+            $.ajax({
+                url: '/api/v1/user/addpatient',  // Adjust the URL to match your backend route
+                method: 'POST',
+                data: JSON.stringify(formData),
+                contentType: 'application/json',
+                success: function (response) {
+                    alert('Patient added successfully!');
+                    window.location.href = '/api/v1/user/admin/dashboard';  // Redirect to the admin dashboard
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + xhr.responseText);  // Show error message
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

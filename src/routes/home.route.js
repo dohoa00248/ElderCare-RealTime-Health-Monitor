@@ -1,15 +1,15 @@
 import expres from 'express';
-import User from '../model/user.model.js';
+import User from '../models/user.model.js';
 const router = expres.Router();
 
 router.get('/', async (req, res) => {
-    res.render('testhome.ejs');
+    res.render('home.ejs');
 })
-router.get('/api/v1/auth/signin', async (req, res) => {
+router.get('/auth/signin', async (req, res) => {
     res.render('signin.ejs');
 })
-
 router.get('/connectDB', async (req, res) => {
+
     const mongodbUri = 'mongodb://localhost:27017/test';
     try {
         await mongoose.connect(mongodbUri);
@@ -20,4 +20,5 @@ router.get('/connectDB', async (req, res) => {
         res.status(500).json({ status: false, message: 'Connected to MongoDB using Mongoose failed.', error: error });
     }
 })
+
 export default router
