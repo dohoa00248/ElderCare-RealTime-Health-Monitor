@@ -40,11 +40,11 @@ router.get('/doctor/dashboard', async (req, res) => {
     }
 })
 
-//add patient
+
 router.get('/addpatient', (req, res) => {
-    res.render('addpatient'); // render trang đăng ký bệnh nhân
+    res.render('addpatient');
 });
-// API tìm kiếm bệnh nhân
+
 router.get('/patients/search', async (req, res) => {
     try {
         const searchQuery = req.query.query;
@@ -72,36 +72,36 @@ router.post('/addpatient', userController.addPatient);
 router.get('/doctors', async (req, res) => {
     try {
         const doctors = await User.getAllDoctors();
-        res.json(doctors); // Send the list of doctors as a response
+        res.json(doctors);
     } catch (error) {
         console.error('Error fetching doctors:', error);
         res.status(500).json({ error: 'Failed to fetch doctors' });
     }
 })
-// Lấy danh sách bệnh nhân của bác sĩ
-router.get('/patients', async (req, res) => {
-    try {
-        // Bạn có thể thay thế với ID bác sĩ bạn muốn, ví dụ:
-        const doctorId = '675ac0680f210f6e8847f775';  // Thay thế bằng ID của bác sĩ
+// // Lấy danh sách bệnh nhân của bác sĩ
+// router.get('/patients', async (req, res) => {
+//     try {
+//         // Bạn có thể thay thế với ID bác sĩ bạn muốn, ví dụ:
+//         const doctorId = '675ac0680f210f6e8847f775';  // Thay thế bằng ID của bác sĩ
 
-        // Lấy thông tin bác sĩ từ database, với thông tin bệnh nhân liên kết
-        const doctor = await User.findById(doctorId).populate('patients', 'firstName lastName email');
+//         // Lấy thông tin bác sĩ từ database, với thông tin bệnh nhân liên kết
+//         const doctor = await User.findById(doctorId).populate('patients', 'firstName lastName email');
 
-        if (!doctor || doctor.role !== 2) {  // Kiểm tra xem có phải là bác sĩ không
-            return res.status(400).json({ message: 'Bác sĩ không tồn tại hoặc không đúng' });
-        }
+//         if (!doctor || doctor.role !== 2) {  // Kiểm tra xem có phải là bác sĩ không
+//             return res.status(400).json({ message: 'Bác sĩ không tồn tại hoặc không đúng' });
+//         }
 
-        // Trả về danh sách bệnh nhân của bác sĩ
-        res.status(200).json({
-            patients: doctor.patients  // Dữ liệu bệnh nhân sẽ được chứa trong doctor.patients
-        });
+//         // Trả về danh sách bệnh nhân của bác sĩ
+//         res.status(200).json({
+//             patients: doctor.patients  // Dữ liệu bệnh nhân sẽ được chứa trong doctor.patients
+//         });
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Lỗi server' });
-    }
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: 'Lỗi server' });
+//     }
 
-});
+// });
 router.get('/patients/:doctorId', async (req, res) => {
     try {
         const { doctorId } = req.params;  // Lấy doctorId từ URL parameter

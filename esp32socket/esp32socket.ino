@@ -8,7 +8,7 @@
 #include <WebSocketsClient.h>
 
 // Cấu hình Wi-Fi
-#define WIFI_SSID "DTH 999"
+#define WIFI_SSID "Wifi chùa"
 #define WIFI_PASSWORD "9999999990"
 // Cấu hình Wi-Fi
 
@@ -29,8 +29,8 @@ int ledLowSpo2 = 25;
 int ledHighTemp = 26;
 
 // Thông tin WebSocket server
-// const char* websocketServer = "192.168.94.58";  // Địa chỉ WebSocket server
-const char* websocketServer = "192.168.2.175";  // Địa chỉ WebSocket server
+const char* websocketServer = "192.168.94.58";  // Địa chỉ WebSocket server
+// const char* websocketServer = "192.168.2.175";  // Địa chỉ WebSocket server
 
 const int port = 8080;
 WebSocketsClient webSocket;

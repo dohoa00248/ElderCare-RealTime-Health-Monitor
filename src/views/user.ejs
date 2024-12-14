@@ -165,8 +165,8 @@
 
     <script>
         $(document).ready(function () {
-            const ws = new WebSocket('ws:/192.168.2.175:8080');
-            // const ws = new WebSocket('ws:/192.168.94.58:8080');
+            // const ws = new WebSocket('ws://192.168.2.175:8080');
+            const ws = new WebSocket('ws://192.168.6.58:8080');
             let heartRateData = { labels: [], datasets: [{ label: 'Heart Rate (BPM)', data: [], borderColor: 'red', fill: false }] };
             let spO2Data = { labels: [], datasets: [{ label: 'SpO2 (%)', data: [], borderColor: 'blue', fill: false }] };
             let bodyTempData = { labels: [], datasets: [{ label: 'Body Temp (°C)', data: [], borderColor: 'green', fill: false }] };

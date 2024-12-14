@@ -12,8 +12,9 @@ import getLocalIP from './config/local.config.js';
 import cookieParser from 'cookie-parser';
 import corsMiddleware from './middleware/cors.middleware.js';
 import HealthData from './models/healthdata.model.js';
-// import https from 'https';
-// import fs from 'fs';
+// import https from 'https';  // Uncomment if you want to use HTTPS
+// import fs from 'fs';       // Uncomment if you want to use HTTPS
+
 // Khởi tạo app Express
 const app = express();
 
@@ -91,24 +92,6 @@ wss.on('connection', (ws) => {
             // Log dữ liệu để kiểm tra
             console.log('Parsed data:', data);
 
-            // Kiểm tra xem dữ liệu có đầy đủ các trường bắt buộc không
-            const requiredFields = ['deviceID', 'heartBeat', 'tempBody', 'ambientTemp'];
-            const missingFields = requiredFields.filter(field => !data.hasOwnProperty(field));
-
-            // if (missingFields.length > 0) {
-            //     console.error(`Missing required fields: ${missingFields.join(', ')}`);
-            //     throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
-            // }
-            // Ensure that patientID is included (add a default if not provided)
-            // if (!data.patientID) {
-            //     console.warn('patientID is missing, adding a default value');
-            //     data.patientID = '674d9b644072c8c4a6a0e5e2';  // Provide a default patient ID
-            // }
-            // Ensure that patientID is included (add a default if not provided)
-            if (!data.deviceID) {
-                console.warn('deviceID is missing, adding a default value');
-                data.patientID = 'DV01';
-            }
             // Chẩn đoán sức khỏe và trạng thái sức khỏe
             const healthDiagnosis = diagnoseHealth(data.heartBeat, data.spo2, data.tempBody);
             const healthStatus = diagnoseHealthStatus(data.heartBeat, data.spo2, data.tempBody);

@@ -146,9 +146,12 @@ const addPatient = async (req, res) => {
 }
 const getUpdatePatientPage = async (req, res) => {
     try {
+
         const { userId } = req.params;
         const patientById = await User.findById(userId);
-        return res.render('updatepatient.ejs', { user: patientById });
+        const doctors = await User.getAllDoctors();
+        console.log(doctors);
+        return res.render('updatepatient.ejs', { user: patientById, doctors: doctors });
     } catch (error) {
         res.status(400).json({ status: false, message: 'Error finding user.', error: error });
     }

@@ -43,7 +43,6 @@ const healthDataSchema = new mongoose.Schema({
         timestamps: true
     });
 
-
 const HealthData = mongoose.model('HealthData', healthDataSchema);
 
 export default HealthData
