@@ -1,34 +1,43 @@
-import User from "../models/user.model.js";
+import User from "../models/User.js";
 import bcrypt from 'bcrypt';
+
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find({});
-        res.render('user.ejs', { users: users });
+        const users = await User.getAllUsers();
+        res.render('userlist.ejs', { users: users });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error });
     }
-};
+}
+
 const getCreateUser = async (req, res) => {
-    res.render('create.ejs');
+    res.render('signup.ejs');
 }
 
 const createUser = async (req, res) => {
 
     try {
         const { username, password, email, role } = req.body;
-
         // const user = new User({ username: username, password: password, email: email, role: role });
         const user = await User.createUser(username, password, email, role);
-        await user.save();
-        res.status(201).json(user);
-        // return res.redirect('/api/v1/user/admin/dashboard');
+        // await user.save();
+        res.status(201).json({
+            status: 'success',
+            message: 'User created successfully.',
+            data: user,
+            // redirectTo: '/api/v1/user/admin/dashboard'  // URL điều hướng sau khi tạo người dùng thành công
+        });
+
     } catch (error) {
-        res.status(400).json({ status: false, message: 'Error creating user.', error: error });
+        res.status(400).json({
+            status: false,
+            message: 'Error creating user.',
+            error: error
+        });
     }
 }
 
 const getUserById = async (req, res) => {
-
     try {
         const { userId } = req.params;
         const userById = await User.findById(userId);
@@ -49,16 +58,6 @@ const getUpdatePage = async (req, res) => {
     }
 }
 
-const getDeletePage = async (req, res) => {
-    try {
-        const { userId } = req.params;
-        const userById = await User.findById(userId);
-        return res.render('delete.ejs', { user: userById });
-    } catch (error) {
-        res.status(400).json({ status: false, message: 'Error finding user.', error: error });
-    }
-}
-
 const updateUser = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -71,10 +70,65 @@ const updateUser = async (req, res) => {
             return res.status(404).json({ status: 'Not Found', message: 'User not found.' });
         }
 
-        res.redirect('/api/v1/user/admin/dashboard');
+        // Trả về JSON với thông báo thành công và URL để điều hướng
+        return res.status(200).json({
+            status: 'success',
+            message: 'User updated successfully.',
+            // redirectTo: '/api/v1/user/admin/dashboard', // URL cần điều hướng sau khi cập nhật thành công
+        });
     } catch (error) {
-        // console.error('Error updating user:', error);
-        res.status(400).json({ status: 'Bad Request', message: 'Error updating user.', error: error });
+        res.status(400).json({
+            status: 'Bad Request',
+            message: 'Error updating user.',
+            error: error,
+        });
+    }
+}
+
+const getUpdatePasswordPage = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userById = await User.findById(userId);
+        return res.render('updatepassword', { user: userById });
+    } catch (error) {
+        res.status(400).json({ status: false, message: 'Error finding user.', error: error });
+    }
+}
+
+const updatePassword = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const updatedData = req.body;
+
+        // Sử dụng phương thức updateUser từ mô hình User
+        const updatedUser = await User.updateUser(userId, updatedData);
+
+        if (!updatedUser) {
+            return res.status(404).json({ status: 'Not Found', message: 'User not found.' });
+        }
+
+        // Trả về JSON với thông báo thành công và URL để điều hướng
+        return res.status(200).json({
+            status: 'success',
+            message: 'Password updated successfully.',
+            // redirectTo: '/api/v1/user/admin/dashboard', // URL cần điều hướng sau khi cập nhật thành công
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: 'Bad Request',
+            message: 'Error updating user.',
+            error: error,
+        });
+    }
+}
+
+const getDeletePage = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userById = await User.findById(userId);
+        return res.render('delete.ejs', { user: userById });
+    } catch (error) {
+        res.status(400).json({ status: false, message: 'Error finding user.', error: error });
     }
 }
 
@@ -82,19 +136,39 @@ const deleteUser = async (req, res) => {
 
     try {
         const { userId } = req.params;
+
+        // Tìm và xóa người dùng theo userId
         const user = await User.findByIdAndDelete(userId);
-        // res.status(200).json(user);
-        res.redirect('/api/v1/user/admin/dashboard');
+
+        if (!user) {
+            return res.status(404).json({
+                status: 'Not Found',
+                message: 'User not found.'
+            });
+        }
+
+        // Trả về JSON với thông tin người dùng đã bị xóa và URL cần điều hướng
+        return res.status(200).json({
+            status: 'success',
+            message: 'User deleted successfully.',
+            user: user,
+            redirectTo: '/api/v1/user/admin/dashboard' // URL điều hướng sau khi xóa người dùng thành công
+        });
+
     } catch (error) {
-        res.status(400).json({ status: 'Bad Request', message: 'Error deleting user.', error: error });
+        res.status(400).json({
+            status: 'Bad Request',
+            message: 'Error deleting user.',
+            error: error
+        });
     }
 }
 
 const addPatient = async (req, res) => {
-    const { username, email, password, firstName, lastName, role, doctorId } = req.body;
+    const { username, email, password, firstName, lastName, role, doctorId, deviceId } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
-    if (!username || !email || !password || !firstName || !lastName || parseInt(role) !== 3 || !doctorId) {
+    if (!username || !email || !password || !firstName || !lastName || parseInt(role) !== 3 || !doctorId || !deviceId) {
         return res.status(400).json({ message: 'Missing required fields or invalid role' });
     }
 
@@ -115,7 +189,7 @@ const addPatient = async (req, res) => {
             return res.status(400).json({ message: 'Doctor not found or invalid doctor ID' });
         }
 
-        // Tạo bệnh nhân mới
+        // Tạo bệnh nhân mới và thêm deviceId
         const newPatient = new User({
             username,
             email,
@@ -124,6 +198,7 @@ const addPatient = async (req, res) => {
             lastName,
             role,  // 3 là bệnh nhân
             doctorId, // Gán ID bác sĩ cho bệnh nhân
+            deviceId, // Thêm deviceId vào đối tượng bệnh nhân
         });
 
         // Mã hóa mật khẩu trước khi lưu
@@ -144,14 +219,37 @@ const addPatient = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message || error });
     }
 }
+
 const getUpdatePatientPage = async (req, res) => {
     try {
-
         const { userId } = req.params;
         const patientById = await User.findById(userId);
         const doctors = await User.getAllDoctors();
         console.log(doctors);
+
+        if (!patientById) {
+            return res.status(404).json({ status: false, message: 'Patient not found' });
+        }
+
+        // Render trang cập nhật bệnh nhân với thông tin của deviceId
         return res.render('updatepatient.ejs', { user: patientById, doctors: doctors });
+    } catch (error) {
+        res.status(400).json({ status: false, message: 'Error finding user.', error: error });
+    }
+}
+const getUpdateHealthDataPage = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const patientById = await User.findById(userId);
+        const doctors = await User.getAllDoctors();
+        console.log(doctors);
+
+        if (!patientById) {
+            return res.status(404).json({ status: false, message: 'Patient not found' });
+        }
+
+        // Render trang cập nhật bệnh nhân với thông tin của deviceId
+        return res.render('updatehealthdata.ejs', { user: patientById, doctors: doctors });
     } catch (error) {
         res.status(400).json({ status: false, message: 'Error finding user.', error: error });
     }
@@ -166,5 +264,8 @@ export default {
     deleteUser,
     getAllUsers,
     addPatient,
-    getUpdatePatientPage
+    getUpdatePatientPage,
+    updatePassword,
+    getUpdatePasswordPage,
+    getUpdateHealthDataPage
 }

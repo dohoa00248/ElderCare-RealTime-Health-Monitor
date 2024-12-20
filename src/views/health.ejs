@@ -80,7 +80,7 @@
                             <!-- <td id="patientID">N/A</td> -->
                             <td id="heartBeat">0 BPM</td>
                             <td id="spo2">0%</td>
-                            <td id="tempBody">N/A</td>
+                            <td id="bodyTemp">N/A</td>
                             <td id="ambientTemp">N/A</td>
                             <td id="healthDiagnosis">N/A</td>
                             <td id="healthStatus">N/A</td>
@@ -153,7 +153,7 @@
 
     <script>
         $(document).ready(function () {
-            const ws = new WebSocket('ws://192.168.6.58:8080');
+            const ws = new WebSocket('ws://192.168.88.58:8080');
             // const ws = new WebSocket('ws://192.168.2.175:8080');
             let heartRateData = { labels: [], datasets: [{ label: 'Heart Rate (BPM)', data: [], borderColor: 'red', fill: false }] };
             let spO2Data = { labels: [], datasets: [{ label: 'SpO2 (%)', data: [], borderColor: 'blue', fill: false }] };
@@ -189,7 +189,7 @@
                 spO2Data.datasets[0].data.push(healthData.spo2);
 
                 bodyTempData.labels.push(timestamp);
-                bodyTempData.datasets[0].data.push(healthData.tempBody);
+                bodyTempData.datasets[0].data.push(healthData.bodyTemp);
 
                 ambientTempData.labels.push(timestamp);
                 ambientTempData.datasets[0].data.push(healthData.ambientTemp);
@@ -213,7 +213,7 @@
                 // $('#patientID').text(data.patientID || 'N/A');
                 $('#heartBeat').text(data.heartBeat || '0 BPM');
                 $('#spo2').text(data.spo2 || '0%');
-                $('#tempBody').text(data.tempBody || 'N/A');
+                $('#bodyTemp').text(data.tempBody || 'N/A');
                 $('#ambientTemp').text(data.ambientTemp || 'N/A');
 
                 if (Array.isArray(data.healthDiagnosis) && data.healthDiagnosis.length > 0) {

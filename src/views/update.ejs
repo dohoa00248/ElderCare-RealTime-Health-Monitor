@@ -49,6 +49,13 @@
         .form-group input:invalid~.invalid-feedback {
             display: block;
         }
+
+        #successMessage {
+            display: none;
+            color: green;
+            font-size: 16px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
@@ -57,7 +64,7 @@
         <h1 class="header">Update User</h1>
 
         <!-- Form cập nhật thông tin người dùng -->
-        <form action="/api/v1/user/update/<%= user._id %>?_method=PUT" method="post">
+        <form id="updateUserForm" action="/api/v1/user/update/<%= user._id %>?_method=PUT" method="post">
             <h3>Update Personal Info</h3>
             <!-- Email -->
             <div class="form-group">
@@ -83,33 +90,7 @@
                 <button type="submit" class="btn btn-primary">Update Info</button>
             </div>
         </form>
-
-        <hr />
-
-        <!-- Form cập nhật mật khẩu -->
-        <form action="/api/v1/user/update/<%= user._id %>?_method=PUT" method="post" id="updatePasswordForm">
-            <h3>Change Password</h3>
-            <!-- New Password -->
-            <div class="form-group">
-                <label for="password">New Password</label>
-                <input type="password" id="password" name="password" class="form-control"
-                    placeholder="Enter new password" required />
-            </div>
-
-            <!-- Confirm New Password -->
-            <div class="form-group">
-                <label for="confirmPassword">Confirm New Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
-                    placeholder="Confirm new password" required />
-                <div class="invalid-feedback" id="passwordMismatchFeedback">
-                    Passwords do not match.
-                </div>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Change Password</button>
-            </div>
-        </form>
+        <div id="successMessage"></div>
 
         <div class="form-group">
             <a href="/api/v1/user/admin/dashboard" class="btn btn-secondary">Cancel</a>
@@ -118,18 +99,28 @@
 
     <script>
         $(document).ready(function () {
-            // Kiểm tra khi form cập nhật mật khẩu được submit
-            $("#updatePasswordForm").on("submit", function (event) {
-                var password = $("#password").val();
-                var confirmPassword = $("#confirmPassword").val();
+            // Cập nhật thông tin người dùng
+            $("#updateUserForm").on("submit", function (event) {
+                event.preventDefault();  // Ngừng gửi form mặc định
 
-                // Kiểm tra mật khẩu và xác nhận mật khẩu có khớp không
-                if (password !== confirmPassword) {
-                    event.preventDefault();  // Ngừng gửi form
-                    $("#passwordMismatchFeedback").show();  // Hiển thị lỗi
-                } else {
-                    $("#passwordMismatchFeedback").hide();  // Ẩn lỗi nếu mật khẩu khớp
-                }
+                var formData = $(this).serialize();  // Thu thập dữ liệu form
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function (res) {
+                        if (res.status === 'success') {
+                            $('#successMessage').text('User updated successfully. Redirecting...').show();
+                            setTimeout(function () {
+                                window.location.href = '/api/v1/user/admin/dashboard';  // Điều hướng về trang admin dashboard
+                            }, 2000);  // Sau 2 giây điều hướng
+                        }
+                    },
+                    error: function (error) {
+                        alert('An error occurred: ' + error.responseText);
+                    }
+                });
             });
         });
     </script>

@@ -8,13 +8,8 @@
 #include <WebSocketsClient.h>
 
 // Cấu hình Wi-Fi
-// #define WIFI_SSID "DTH 999"
-// #define WIFI_PASSWORD "9999999990"
-// Cấu hình Wi-Fi
-
-#define WIFI_SSID "Wifi chùa"
+#define WIFI_SSID "DTH 999"
 #define WIFI_PASSWORD "9999999990"
-
 
 // Địa chỉ I2C và các cảm biến
 #define I2C_ADDRESS 0x57
@@ -32,19 +27,19 @@ int ledLowSpo2 = 25;
 int ledHighTemp = 26;
 
 // Thông tin WebSocket server
-const char* websocketServer = "192.168.6.58";  // Địa chỉ WebSocket server
-// const char* websocketServer = "192.168.2.175";  // Địa chỉ WebSocket server
+const char* websocketServer = "192.168.2.175";  // Địa chỉ WebSocket server
+
 
 const int port = 8080;
 WebSocketsClient webSocket;
 
 // String patientID = "P01";
-String deviceID = "DV01";
+String deviceID = "DV02";
 
 // Các giá trị ngưỡng
 const int lowHeartRate = 60;
-const int highHeartRate = 120;
-const int lowSpo2 = 90;
+const int highHeartRate = 80;
+const int lowSpo2 = 95;
 const float highTemp = 37.5;
 
 unsigned long lastConnectionAttempt = 0;
@@ -129,16 +124,16 @@ void loop() {
   controlLEDs(heart_beat, spo2, temp_obj);
 
 
-  // Gửi dữ liệu lên WebSocket server mỗi 3 giây
+  // Gửi dữ liệu lên WebSocket server mỗi 1 giây
   static unsigned long lastSendTime = 0;
   unsigned long currentMillis = millis();
-  if (currentMillis - lastSendTime >= 3000) {
+  if (currentMillis - lastSendTime >= 1000) {
     lastSendTime = currentMillis;
 
     // Tạo chuỗi JSON để gửi lên server
     // String jsonDsata = "{\"deviceID\":\"" + deviceID + "\",\"patientID\":\"" + patientID + "\",\"heartBeat\":" + heart_beat + ",\"spo2\":" + spo2 + ",\"tempBody\":" + temp_obj + ",\"ambientTemp\":" + temp_amb + "}";
    
-    String jsonData = "{\"deviceID\":\"" + deviceID + "\",\"heartBeat\":" + heart_beat + ",\"spo2\":" + spo2 + ",\"tempBody\":" + temp_obj + ",\"ambientTemp\":" + temp_amb + "}";
+    String jsonData = "{\"deviceID\":\"" + deviceID + "\",\"heartBeat\":" + heart_beat + ",\"spo2\":" + spo2 + ",\"bodyTemp\":" + temp_obj + ",\"ambientTemp\":" + temp_amb + "}";
 
     // Gửi dữ liệu lên WebSocket server
     if (webSocket.isConnected()) {

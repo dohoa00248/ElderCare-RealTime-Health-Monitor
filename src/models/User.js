@@ -39,13 +39,17 @@ const userSchema = new mongoose.Schema({
         }
     ],
 
-
+    // Bệnh nhân có thể có nhiều bản ghi sức khỏe
+    healthData: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'HealthData', // Liên kết với model HealthData
+    }],
     //Benh nhan se lien ket vs thiet bi va ca bac si
-    deviceID: {
-        type: String,
-        required: false,
-        unique: true // Đảm bảo mỗi thiết bị chỉ liên kết với một bệnh nhân
-    },
+    // deviceID: {
+    //     type: String,
+    //     required: false,
+    //     unique: true // Đảm bảo mỗi thiết bị chỉ liên kết với một bệnh nhân
+    // },
     doctorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

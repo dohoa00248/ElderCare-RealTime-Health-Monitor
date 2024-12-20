@@ -1,7 +1,7 @@
-import homeRouter from './home.route.js';
-import userRouter from './user.route.js';
-import authRouter from './auth.route.js';
-import healthRouter from './health.route.js'
+import homeRouter from './homeRoutes.js';
+import userRouter from './userRoutes.js';
+import authRouter from './authRoutes.js';
+import healthRouter from './healthRoutes.js'
 
 import testRouter from './test.route.js';
 const webRoutes = (app) => {

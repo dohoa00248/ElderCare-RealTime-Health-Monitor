@@ -6,14 +6,4 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'], // Các header được phép
 };
 
-// Cấu hình cho môi trường development
-// if (process.env.NODE_ENV === 'development') {
-//     corsOptions.origin = 'http://192.168.2.175:8080';  // Chỉ cho phép nguồn gốc từ localhost (frontend phát triển)
-// }
-
-// Cấu hình cho môi trường production
-// if (process.env.NODE_ENV === 'production') {
-//     corsOptions.origin = 'https://your-production-domain.com'; // Ví dụ: miền sản xuất của bạn
-// }
-
 export default corsOptions;

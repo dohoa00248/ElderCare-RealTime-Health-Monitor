@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New Patient</title>
+    <title>Create Patient</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <script src="/js/jquery-3.7.1.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
@@ -17,7 +17,7 @@
 
 <body>
     <div class="container">
-        <h2>Add New Patient</h2>
+        <h2>Create New Patient</h2>
         <form id="addPatientForm">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -42,15 +42,15 @@
             <!-- Doctor Selection -->
             <div class="form-group">
                 <label for="doctorId">Assign Doctor</label>
-                <select id="doctorId" name="doctorId" class="form-control">
+                <select id="doctorId" name="doctorId" class="form-control" required>
                     <option value="">Select a Doctor</option>
                     <!-- Doctors will be added here dynamically -->
                 </select>
             </div>
-            <!-- <div class="form-group">
-                <label for="deviceId">Device ID</label>
-                <input type="text" id="deviceId" class="form-control" required />
-            </div> -->
+            <div class="form-group">
+                <label for="deviceID">Device ID</label>
+                <input type="text" id="deviceID" class="form-control" required />
+            </div>
 
             <div class="form-group">
                 <label for="role">Role</label>
@@ -59,11 +59,37 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Add Patient</button>
+            <!-- Additional Health Data Fields -->
+            <div class="form-group">
+                <label for="heartBeat">Heart Beat (BPM)</label>
+                <input type="number" id="heartBeat" class="form-control" value="0" />
+            </div>
+            <div class="form-group">
+                <label for="spo2">SpO2 (%)</label>
+                <input type="number" id="spo2" class="form-control" value="0" />
+            </div>
+            <div class="form-group">
+                <label for="bodyTemp">Body Temperature (°C)</label>
+                <input type="number" id="bodyTemp" class="form-control" value="0" />
+            </div>
+            <div class="form-group">
+                <label for="ambientTemp">Ambient Temperature (°C)</label>
+                <input type="number" id="ambientTemp" class="form-control" value="0" />
+            </div>
+            <div class="form-group">
+                <label for="healthDiagnosis">Health Diagnosis</label>
+                <input type="text" id="healthDiagnosis" class="form-control" value="Normal" />
+            </div>
+            <div class="form-group">
+                <label for="healthStatus">Health Status</label>
+                <input type="text" id="healthStatus" class="form-control" value="Healthy" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create Patient</button>
         </form>
 
-        <!-- Back to Doctor Dashboard button -->
-        <a href="/api/v1/user/admin/dashboard" class="btn btn-secondary mt-3">Back to Admin Dashboard</a>
+        <!-- Back to Admin Dashboard button -->
+        <a href="/api/v1/user/doctor/dashboard" class="btn btn-secondary mt-3">Back to Doctor Dashboard</a>
     </div>
 
     <script>
@@ -89,11 +115,10 @@
                 }
             });
 
-            // Handle form submission to add a new patient
             $('#addPatientForm').submit(function (e) {
                 e.preventDefault();
 
-                // Get the form data including the new deviceId field
+                // Get the form data including the new health data fields
                 const formData = {
                     username: $('#username').val(),
                     email: $('#email').val(),
@@ -102,48 +127,33 @@
                     lastName: $('#lastName').val(),
                     role: $('#role').val(),
                     doctorId: $('#doctorId').val(),
-                    deviceId: $('#deviceId').val(), // Add deviceId field
+                    deviceID: $('#deviceID').val(), // Device ID field
+                    heartBeat: $('#heartBeat').val() || 0, // Default to 0 if not provided
+                    spo2: $('#spo2').val() || 0, // Default to 0 if not provided
+                    bodyTemp: $('#bodyTemp').val() || 0, // Default to 0 if not provided
+                    ambientTemp: $('#ambientTemp').val() || 0, // Default to 0 if not provided
+                    healthDiagnosis: $('#healthDiagnosis').val() || "Normal", // Default to "Normal" if not provided
+                    healthStatus: $('#healthStatus').val() || "Healthy" // Default to "Healthy" if not provided
                 };
 
-                // Send the data to the backend API
+                // Get the doctorId from the form, which will be passed as userId in the URL
+                const doctorId = $('#doctorId').val(); // This will be used as userId in the API call
+
+                // Send the data to the backend API (create health data for a specific doctorId)
                 $.ajax({
-                    url: '/api/v1/user/addpatient',  // Adjust the URL to match your backend route
+                    url: `/api/v1/health/create/${doctorId}`,  // URL with dynamic doctorId (as userId)
                     method: 'POST',
                     data: JSON.stringify(formData),
                     contentType: 'application/json',
                     success: function (response) {
-                        alert('Patient added successfully!');
-                        // window.location.href = '/api/v1/user/doctor/dashboard';  // Redirect to the admin dashboard
+                        alert('Patient created and health data added successfully!');
+                        window.location.href = '/api/v1/user/doctor/dashboard';  // Redirect to the doctor dashboard
                     },
                     error: function (xhr, status, error) {
                         alert('Error: ' + xhr.responseText);  // Show error message
                     }
                 });
             });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            const token = localStorage.getItem('token');
-
-            if (token) {
-                $.ajax({
-                    url: '/api/v1/user/addpatient',
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    },
-                    success: function (res) {
-                        console.log('User data:', res);
-                    },
-                    error: function (xhr) {
-                        console.error('Error:', xhr.responseText);
-                    }
-                });
-            } else {
-                console.log('Token not found, please log in');
-                window.location.href = '/api/v1/auth';
-            }
         });
     </script>
 </body>

@@ -93,7 +93,7 @@
                             <td id="deviceID">N/A</td>
                             <td id="heartBeat">0 BPM</td>
                             <td id="spo2">0%</td>
-                            <td id="tempBody">N/A</td>
+                            <td id="bodyTemp">N/A</td>
                             <td id="ambientTemp">N/A</td>
                             <td id="healthDiagnosis">N/A</td>
                             <td id="healthStatus">N/A</td>
@@ -128,6 +128,8 @@
         <button id="viewHistoryBtn" class="btn btn-primary">Xem Lịch sử</button>
         <button id="backButton" class="btn btn-secondary">Quay lại trang</button>
         <button id="logoutBtn" class="btn btn-danger">Đăng Xuất</button>
+        <button id="viewHealthDataBtn" class="btn btn-info">Xem Dữ Liệu Sức Khỏe</button>
+
 
         <!-- Modal History -->
         <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
@@ -165,8 +167,8 @@
 
     <script>
         $(document).ready(function () {
-            // const ws = new WebSocket('ws://192.168.2.175:8080');
-            const ws = new WebSocket('ws://192.168.6.58:8080');
+            // WebSocket connection for health data
+            const ws = new WebSocket('ws://192.168.88.58:8080');
             let heartRateData = { labels: [], datasets: [{ label: 'Heart Rate (BPM)', data: [], borderColor: 'red', fill: false }] };
             let spO2Data = { labels: [], datasets: [{ label: 'SpO2 (%)', data: [], borderColor: 'blue', fill: false }] };
             let bodyTempData = { labels: [], datasets: [{ label: 'Body Temp (°C)', data: [], borderColor: 'green', fill: false }] };
@@ -198,7 +200,7 @@
                 spO2Data.datasets[0].data.push(healthData.spo2);
 
                 bodyTempData.labels.push(timestamp);
-                bodyTempData.datasets[0].data.push(healthData.tempBody);
+                bodyTempData.datasets[0].data.push(healthData.bodyTemp);
 
                 ambientTempData.labels.push(timestamp);
                 ambientTempData.datasets[0].data.push(healthData.ambientTemp);
@@ -218,7 +220,7 @@
                 $('#deviceID').text(data.deviceID || 'N/A');
                 $('#heartBeat').text(data.heartBeat || '0 BPM');
                 $('#spo2').text(data.spo2 || '0%');
-                $('#tempBody').text(data.tempBody || 'N/A');
+                $('#bodyTemp').text(data.bodyTemp || 'N/A');
                 $('#ambientTemp').text(data.ambientTemp || 'N/A');
 
                 if (Array.isArray(data.healthDiagnosis) && data.healthDiagnosis.length > 0) {
@@ -242,7 +244,7 @@
                                     <td>${item.deviceID || 'N/A'}</td>
                                     <td>${item.heartBeat || '0 BPM'}</td>
                                     <td>${item.spo2 || '0%'}</td>
-                                    <td>${item.tempBody || 'N/A'}</td>
+                                    <td>${item.bodyTemp || 'N/A'}</td>
                                     <td>${item.ambientTemp || 'N/A'}</td>
                                     <td>${Array.isArray(item.healthDiagnosis) && item.healthDiagnosis.length > 0 ? item.healthDiagnosis.join(', ') : 'N/A'}</td>
                                     <td>${item.healthStatus || 'N/A'}</td>
@@ -269,19 +271,81 @@
 
         let token = localStorage.getItem('token');
         if (token) {
+            console.log('JWT Token:', token); // Debugging token
             let decodedToken = jwt_decode(token);
+            console.log('Decoded Token:', decodedToken); // Debugging decoded token
 
+            // Check token expiration
+            let expirationTime = decodedToken.exp * 1000;
+            let currentTime = Date.now();
+            if (currentTime > expirationTime) {
+                console.log('Token has expired');
+                window.location.href = '/api/v1/auth'; // Redirect to login if expired
+            }
+
+            // Fallback if _id is missing
             $('#patientName').text(decodedToken.firstName + ' ' + decodedToken.lastName);
-            $('#patientID').text('Mã bệnh nhân: ' + decodedToken._id);
             $('#patientEmail').text('Email: ' + decodedToken.email);
+            $('#patientID').text(decodedToken.id ? 'Mã bệnh nhân: ' + decodedToken.id : 'Mã bệnh nhân: Unknown');
+
         } else {
-            window.location.href = '/api/v1/auth';
+            window.location.href = '/api/v1/auth'; // Redirect if no token
         }
 
         $('#logoutBtn').click(function () {
             localStorage.removeItem('token');
             window.location.href = '/api/v1/auth';
         });
+    </script>
+
+    <script>
+        $('#viewHealthDataBtn').click(function () {
+            // Lấy userId từ token (hoặc từ bất kỳ nơi nào bạn lưu trữ userId)
+            let decodedToken = jwt_decode(token);
+            // console.log('Decoded Token:', decodedToken); // Debugging decoded token
+            let userId = decodedToken.id;  // Thay thế bằng userId thực tế
+
+            // Gửi yêu cầu HTTP tới API để lấy dữ liệu sức khỏe
+            $.ajax({
+                url: `/api/v1/health/${userId}`,  // URL của API
+                method: 'GET',
+                success: function (data) {
+                    // Kiểm tra xem dữ liệu có hợp lệ không
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Clear previous data in the table
+                        $('#historyTable tbody').empty();
+
+                        // Duyệt qua mảng dữ liệu và thêm vào bảng
+                        data.forEach(item => {
+                            const tableRow = `<tr>
+                            <td>${item.deviceID || 'N/A'}</td>
+                            <td>${item.heartBeat || '0 BPM'}</td>
+                            <td>${item.spo2 || '0%'}</td>
+                            <td>${item.bodyTemp || 'N/A'}</td>
+                            <td>${item.ambientTemp || 'N/A'}</td>
+                            <td>${item.healthDiagnosis || 'N/A'}</td>
+                            <td>${item.healthStatus || 'N/A'}</td>
+                            <td>${item.createdAt ? new Date(item.createdAt).toLocaleString() : 'N/A'}</td>
+                            <td>${item.updatedAt ? new Date(item.updatedAt).toLocaleString() : 'N/A'}</td>
+                        </tr>`;
+                            // Thêm dữ liệu vào bảng
+                            $('#historyTable tbody').append(tableRow);
+                        });
+                    } else {
+                        // Nếu không có dữ liệu, hiển thị thông báo
+                        $('#historyTable tbody').append('<tr><td colspan="9">No health data available</td></tr>');
+                    }
+
+                    // Hiển thị modal
+                    $('#historyModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching health data:', error);
+                    alert('Không thể tải dữ liệu sức khỏe.');
+                }
+            });
+        });
+
     </script>
 </body>
 

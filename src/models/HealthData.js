@@ -7,11 +7,6 @@ const healthDataSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    // patientID: {
-    //     type: mongoose.Schema.Types.ObjectId, // Sử dụng ObjectId để tham chiếu tới User
-    //     ref: 'User', // Tên model User
-    //     required: true
-    // },
     heartBeat: {
         type: Number,
         default: 0,
@@ -22,7 +17,7 @@ const healthDataSchema = new mongoose.Schema({
         default: 0,
         require: true
     },
-    tempBody: {
+    bodyTemp: {
         type: Number,
         required: true
     },

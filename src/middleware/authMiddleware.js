@@ -1,7 +1,7 @@
 // authMiddleware.js
 import { configDotenv } from 'dotenv';
 import jwt from 'jsonwebtoken';
-import User from '../models/user.model.js';
+import User from '../models/User.js';
 
 // Cấu hình dotenv để tải các biến môi trường từ file .env
 configDotenv(); // Chỉ cần gọi 1 lần
@@ -11,7 +11,8 @@ function authenticateToken(req, res, next) {
     const token = req.headers['authorization']?.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ message: 'Authorization header is required. Token missing.' });
+        return res.redirect('/api/v1/auth/');
+        // return res.status(401).json({ message: 'Authorization header is required. Token missing.' });
     }
 
     // Xác thực và giải mã token

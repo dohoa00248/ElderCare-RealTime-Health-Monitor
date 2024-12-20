@@ -112,18 +112,6 @@
 
     <script>
         $(document).ready(function () {
-            // Check if deletion was successful (using query string)
-            const urlParams = new URLSearchParams(window.location.search);
-            const success = urlParams.get('success'); // Check if the 'success' param exists
-
-            // If 'success' is present in the query string, show the success message
-            if (success === 'true') {
-                $('#deleteSuccessMessage').removeClass('d-none');  // Show success message
-                setTimeout(function () {
-                    window.location.href = '/api/v1/user/admin/dashboard';  // Redirect back to Admin page after 3 seconds
-                }, 3000);
-            }
-
             // Handle the form submission and show error if any
             $('#deleteForm').submit(function (event) {
                 event.preventDefault();  // Prevent the default form submission
@@ -132,7 +120,7 @@
                     url: $(this).attr('action'),  // Use form's action attribute as URL
                     type: 'POST',
                     data: $(this).serialize(),  // Serialize form data
-                    success: function (response) {
+                    success: function (res) {
                         // On success, show the success message and redirect after a while
                         $('#deleteSuccessMessage').removeClass('d-none');
                         setTimeout(function () {

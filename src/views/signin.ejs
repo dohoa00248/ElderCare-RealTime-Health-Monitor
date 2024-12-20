@@ -42,7 +42,6 @@
 
     <script>
         $(document).ready(function () {
-            // Xử lý khi submit form đăng nhập
             $('#loginForm').on('submit', function (event) {
                 event.preventDefault();  // Ngăn chặn gửi form mặc định
 
@@ -55,28 +54,36 @@
                     url: '/api/v1/auth/signin',  // URL của API đăng nhập
                     method: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ username, password }),  // Gửi dữ liệu người dùng
+                    data: JSON.stringify({ username, password }),
                     success: function (res) {
-                        const token = res.token;  // Lấy token từ phản hồi
+                        const token = res.token;
                         if (token) {
                             // Lưu token vào localStorage
-                            localStorage.setItem('token', token);  // Lưu token vào localStorage
+                            localStorage.setItem('token', token);
 
-                            // Kiểm tra token đã được lưu vào localStorage chưa
-                            console.log(localStorage.getItem('token'));  // Kiểm tra token trong localStorage
-                            // Giải mã token để kiểm tra phân quyền (role)
-                            const decodedToken = JSON.parse(atob(token.split('.')[1]));  // Giải mã token base64
-                            const role = decodedToken.role;  // Lấy role từ token
+                            // Giải mã token để lấy thông tin người dùng
+                            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+                            const userId = decodedToken;  // Lấy _id của người dùng từ token
 
-                            // Chuyển hướng người dùng dựa trên phân quyền
+
+                            console.log("User ID: ", userId);  // In ra _id để kiểm tra
+
+                            // Giải mã token để lấy role (nếu có)
+                            const role = decodedToken.role;
+
+                            // Kiểm tra role và chuyển hướng đến các trang tương ứng
                             if (role === 1) {
-                                window.location.href = '/api/v1/user/admin/dashboard';  // Admin
+                                // Admin
+                                window.location.href = '/api/v1/user/admin/dashboard';
                             } else if (role === 2) {
-                                window.location.href = '/api/v1/user/doctor/dashboard';  // Bác sĩ
+                                // Bác sĩ
+                                window.location.href = '/api/v1/user/doctor/dashboard';
                             } else if (role === 3) {
-                                window.location.href = '/api/v1/user/';  // Người dùng
+                                // Người dùng (bệnh nhân)
+                                window.location.href = '/api/v1/user/';
                             } else {
-                                window.location.href = '/';  // Nếu không xác định, chuyển hướng về trang chủ
+                                // Nếu không phải là một trong các role trên, chuyển về trang chủ
+                                window.location.href = '/';
                             }
                         } else {
                             messageDiv.removeClass('alert-success').addClass('alert-danger');
@@ -89,7 +96,6 @@
                     }
                 });
             });
-
         });
     </script>
 </body>
