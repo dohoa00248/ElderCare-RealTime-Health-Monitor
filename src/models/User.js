@@ -7,14 +7,14 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    password: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: true,
         unique: true
-    },
-    password: {
-        type: String,
-        required: true,
     },
     role: {
         type: Number,
@@ -44,12 +44,6 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'HealthData', // Liên kết với model HealthData
     }],
-    //Benh nhan se lien ket vs thiet bi va ca bac si
-    // deviceID: {
-    //     type: String,
-    //     required: false,
-    //     unique: true // Đảm bảo mỗi thiết bị chỉ liên kết với một bệnh nhân
-    // },
     doctorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -81,15 +75,15 @@ const userSchema = new mongoose.Schema({
             return user;
         },
         // Get user by ID
-        getUserById: async function (userId) {
+        findUserById: async function (userId) {
             return await this.findById(userId);
         },
-        // Get user by email
-        getUserByEmail: async function (email) {
+        // Get user by emailc
+        findUserByEmail: async function (email) {
             return await this.findOne({ email: email });
         },
         // Update user
-        updateUser: async function (userId, updatedUser) {
+        updateUserById: async function (userId, updatedUser) {
             if (updatedUser.password) {
                 const hashedPassword = await bcrypt.hash(updatedUser.password, 10);
                 updatedUser.password = hashedPassword;
@@ -97,17 +91,41 @@ const userSchema = new mongoose.Schema({
             const user = await this.findByIdAndUpdate(userId, updatedUser, { new: true });
             return user;
         },
+        deleteUserById: async function (userId) {
+            const user = await this.findByIdAndDelete(userId);
+            return user;
+        },
         // Find all users
-        getAllUsers: async function () {
-            return await this.find({});
+        findAllUsers: async function () {
+            return await this.find();
         },
         // Find all doctors
-        getAllDoctors: async function () {
+        findAllDoctors: async function () {
             return await this.find({ role: 2 });
         },
+        findPatientsOfDoctor: async function (doctorId) {
+            const doctor = await this.findById(doctorId)
+                .populate({
+                    path: 'patients',  // Lấy thông tin các bệnh nhân liên kết với bác sĩ
+                    populate: {
+                        path: 'healthData',  // Lấy thông tin từ mảng healthData của mỗi bệnh nhân
+                    }
+                });
+            return doctor;
+            // const doctor = await this.findById(doctorId)
+            //     .populate({
+            //         path: 'patients',  // Tìm các bệnh nhân liên kết với bác sĩ
+            //         populate: {
+            //             path: 'healthData',  // Populates the health data array
+            //             select: 'deviceID heartBeat spo2 bodyTemp ambientTemp healthDiagnosis healthStatus'  // Các trường của healthData cần lấy
+            //         }
+            //     });
+            // return doctor;
+        }
     }
 });
 
 const User = mongoose.model('User', userSchema);
 
 export default User;
+

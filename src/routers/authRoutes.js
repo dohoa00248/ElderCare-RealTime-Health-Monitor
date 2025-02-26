@@ -2,10 +2,6 @@ import express from 'express';
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import authenticateToken from '../middleware/authMiddleware.js';
-
-import authController from '../controllers/authController.js';
-
 
 import dotenv from 'dotenv';
 
@@ -85,45 +81,5 @@ router.post('/signin', async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
-
-router.get('/login', (req, res) => {
-    res.render('login.ejs')
-})
-router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        // Tìm người dùng trong cơ sở dữ liệu
-        const user = await User.findOne({ username });
-
-        // Nếu không tìm thấy người dùng
-        if (!user) {
-            return res.status(400).json({ message: 'Username or password is incorrect.' });
-        }
-
-        // Kiểm tra mật khẩu
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Username or password is incorrect.' });
-        }
-
-        // Tạo JWT token (secret key có thể được cấu hình từ environment variable)
-        const token = jwt.sign(
-            { userId: user._id, username: user.username },
-            '12344', // Secret key dùng để ký token, nên để trong môi trường bảo mật
-            { expiresIn: '1m' } // Token hết hạn sau 1 giờ
-        );
-
-        // Gửi token về cho người dùng
-        // res.json({ token });
-        res.render('/api/v1/user/test', {
-            token: token
-        })
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error. Please try again.' });
-    }
-})
-
 
 export default router

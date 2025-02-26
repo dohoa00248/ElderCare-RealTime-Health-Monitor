@@ -30,7 +30,7 @@ router.get('/:userId', healthDataController.getHealthDataForUser);
 // Route để tạo thông tin sức khỏe cho bệnh nhân
 router.post('/create/:userId', healthDataController.createHealthDataForUser);
 
-router.get('/update-healthdata/:userId', userController.getUpdateHealthDataPage);
+// router.get('/update-healthdata/:userId', userController.getUpdateHealthDataPage);
 // Cập nhật dữ liệu sức khỏe
 router.post('/update-health-data/:patientId', async (req, res) => {
     const { patientId } = req.params;
@@ -51,7 +51,7 @@ router.post('/update-health-data/:patientId', async (req, res) => {
             await patient.save();
             res.render('updatehealthdata.ejs', { patient, message: { type: 'alert-success', text: 'Cập nhật dữ liệu sức khỏe thành công!' } });
         } else {
-            res.redirect('/api/v1/user/doctor/dashboard'); 
+            res.redirect('/api/v1/user/doctor/dashboard');
         }
     } catch (err) {
         console.error(err);

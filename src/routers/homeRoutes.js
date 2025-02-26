@@ -1,5 +1,5 @@
 import expres from 'express';
-import User from '../models/User.js';
+
 const router = expres.Router();
 
 router.get('/', async (req, res) => {
