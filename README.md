@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Project Name
 
 ## Description
@@ -67,8 +66,3 @@ Explore the Features: Use the application to explore its functionalities. This m
 Interacting with the API: If the project includes an API, you can use tools like Postman or cURL to test the API endpoints. Refer to the API documentation (if provided) for detailed information on the available endpoints and their usage.
 
 Access the Admin Dashboard: For administrative functions, navigate to http://localhost:8080/api/v1/user/admin. This endpoint provides access to the admin dashboard where you can explore various administrative features.
-
-## Configuration
-=======
-# dohoa00248-ElderCare-RealTime-Health-Monitor
->>>>>>> a9c61d7 (Initial commit)
